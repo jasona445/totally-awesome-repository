@@ -1,0 +1,4 @@
+getLoci <- function(summStats){
+  
+}
+
