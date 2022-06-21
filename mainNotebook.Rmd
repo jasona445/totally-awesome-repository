@@ -23,6 +23,8 @@ If so.. could we use to do this better?
 cut_df <- df
 df$REGION = integer(nrow(df))
 
+lead_snps <- c()
+
 reg = 1
 while(min(cut_df$P) < 5e-8){
   
@@ -34,16 +36,49 @@ while(min(cut_df$P) < 5e-8){
   
   df$REGION[ (rownames(snps_in_region) %in% rownames(df)) ] <- reg
   
+  lead_snps <- c(lead_snps, lead_snp)
+  
   cut_df <- cut_df[! (rownames(cut_df) %in% rownames(snps_in_region)),]
   
   reg <- reg + 1
   
+  
+  
 }
 
 
+```
+Gonna need
+
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("biomaRt")
+
+
+```{r}
+# Gene stuff
+
+require(biomaRt)
+ensembl <- useMart("ensembl")
+ensembl <- useDataset("hsapiens_gene_ensembl",mart=ensembl)
+
+```
+
+```{r}
+
+for(lead_snp in lead_snps){
+  genes <- getBM(attributes=c('chromosome_name', 'start_position', 'end_position', 'strand', 'ensembl_gene_id'),
+      filters=c('chromosome_name', 'start', 'end'),
+      values=list(as.numeric(lead_snp['CHR']), as.numeric(lead_snp['BP']) - 5e5, as.numeric(lead_snp['BP']) + 5e5),
+      mart=ensembl)
+  
+  
+}
 
 
 ```
+
 
 ```{r}
 xlim <- c(2470848, 2500000)
