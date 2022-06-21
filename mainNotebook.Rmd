@@ -6,7 +6,7 @@ output: html_notebook
 Run ze pipeline
 ```{r}
 fname <- '../data/discovery_metav3.0.meta'
-dirty_df <- read.csv(file=fname, nrows=10000, header=TRUE, sep=' ')
+dirty_df <- read.csv(file=fname, nrows=1000000, header=TRUE, sep=' ')
 # dump stuff with missing p's
 good_df <- dirty_df[!is.na(dirty_df$P),]
 df <- good_df[good_df$P < 5e-8,]
@@ -25,17 +25,20 @@ df$REGION = integer(nrow(df))
 
 reg = 1
 while(min(cut_df$P) < 5e-8){
-  maxcol = which.min(cut_df$P)
-  lead_snp = cut_df[max_col,]
+  
+  lead_snp = cut_df[which.min(cut_df$P),]
+  
   lims = c( max(0, lead_snp$BP - 5e5), lead_snp$BP + 5e5 ) # Pray doesnt go over.. if does need length
-  snps_in_region <- cut_df[ cut_df$BP > lims[1] & cut_df$BP < lims[2], ]
-  df$REGION[ (rownames(snps_in_region) %in% rownames(df)) ] <- rep(1, nrow(snps_in_region))
+  
+  snps_in_region <- cut_df[ cut_df$BP > lims[1] & cut_df$BP < lims[2] & cut_df$CHR == as.numeric(lead_snp['CHR']), ] # check chr
+  
+  df$REGION[ (rownames(snps_in_region) %in% rownames(df)) ] <- reg
   cut_df <- cut_df[! (rownames(cut_df) %in% rownames(snps_in_region)),]
   reg <- reg + 1
 }
 
 df
-
+tail(df)
 
 
 ```
