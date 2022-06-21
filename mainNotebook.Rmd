@@ -5,5 +5,8 @@ output: html_notebook
 
 Run ze pipeline
 ```{r}
-
+fname <- './data/discovery_metav3.0.meta'
+df <- read.csv(file=fname, nrows=100, header=TRUE, sep=' ')
+# dump stuff with missing p's
+good_df <- df[!is.na(df$P),]
 ```
