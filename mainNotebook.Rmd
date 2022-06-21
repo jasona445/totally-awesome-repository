@@ -6,9 +6,49 @@ output: html_notebook
 Run ze pipeline
 ```{r}
 fname <- '../data/discovery_metav3.0.meta'
-df <- read.csv(file=fname, nrows=100, header=TRUE, sep=' ')
+dirty_df <- read.csv(file=fname, nrows=10000, header=TRUE, sep=' ')
 # dump stuff with missing p's
-good_df <- df[!is.na(df$P),]
-good_df <- df[df$P < 5e-8]
+good_df <- dirty_df[!is.na(dirty_df$P),]
+df <- good_df[good_df$P < 5e-8,]
+
+
+```
+
+
+Do we know the ld?
+If so.. could we use to do this better?
+
+```{r}
+
+cut_df <- df
+df$REGION = integer(nrow(df))
+
+reg = 1
+while(min(cut_df$P) < 5e-8){
+  maxcol = which.min(cut_df$P)
+  lead_snp = cut_df[max_col,]
+  lims = c( max(0, lead_snp$BP - 5e5), lead_snp$BP + 5e5 ) # Pray doesnt go over.. if does need length
+  snps_in_region <- cut_df[ cut_df$BP > lims[1] & cut_df$BP < lims[2], ]
+  df$REGION[ (rownames(snps_in_region) %in% rownames(df)) ] <- rep(1, nrow(snps_in_region))
+  cut_df <- cut_df[! (rownames(cut_df) %in% rownames(snps_in_region)),]
+  reg <- reg + 1
+}
+
+df
+
+
+
+```
+
+```{r}
+xlim <- c(2470848, 2500000)
+ylim <- c(0, 100)
+par(xaxs='i',yaxs='i',mar=c(5,1,1,1));
+px = sig_snps_df$BP
+py = integer(nrow(sig_snps_df))
+plot(px, py,xlim=xlim,ylim=ylim,ann=F);
+
+
+
 
 ```
