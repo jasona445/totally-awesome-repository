@@ -5,5 +5,73 @@ output: html_notebook
 
 Run ze pipeline
 ```{r}
+fname <- './discovery_metav3.0.meta'
+df <- read.csv(file=fname, header=TRUE, sep=' ')
+# dump stuff with missing p's
+good_df <- df[!is.na(df$P),]
+snp_df <- good_df[good_df$P < 5e-8,]
 
 ```
+
+```{r}
+fname <- './discovery_metav3.0.meta'
+small_df <- read.csv(file=fname, nrows=1e6, header=TRUE, sep=' ')
+# dump stuff with missing p's
+small_good_df <- small_df[!is.na(small_df$P),]
+small_snp_df <- small_good_df[small_good_df$P < 5e-8,]
+```
+
+```{r}
+plot(snp_df$BP, integer(nrow(snp_df)))
+```
+```{r}
+reg = 1
+small_snp_df$REGION = integer(nrow(small_snp_df))
+cut_df <- small_snp_df
+```
+
+```{r}
+lead_snps <- c()
+while(nrow(cut_df) != 0)
+{
+  lead_snp <- cut_df[which.min(cut_df$P),]
+  range <- c(lead_snp$BP-5e5, lead_snp$BP+5e5)
+  loci <- cut_df[cut_df$BP > range[1] & cut_df$BP < range[2],]
+  small_snp_df$REGION[(rownames(small_snp_df) %in% rownames(loci))] <- reg
+  lead_snps <- c(lead_snps, lead_snp)
+  cut_df <- cut_df[cut_df$BP <= range[1] | cut_df$BP >= range[2],]
+  reg <- reg + 1
+}
+```
+
+```{r}
+fname <- './discovery_metav3.0.meta'
+dirty_df <- read.csv(file=fname, nrows=1000000, header=TRUE, sep=' ')
+# dump stuff with missing p's
+good_df <- dirty_df[!is.na(dirty_df$P),]
+df <- good_df[good_df$P < 5e-8,]
+
+cut_df <- df
+df$REGION = integer(nrow(df))
+lead_snps <- data.frame()
+reg = 1
+while(min(cut_df$P) < 5e-8){
+  
+  lead_snp = cut_df[which.min(cut_df$P),]
+  
+  lims = c( max(0, lead_snp$BP - 5e5), lead_snp$BP + 5e5 )
+  
+  snps_in_region <- cut_df[ cut_df$BP > lims[1] & cut_df$BP < lims[2] & cut_df$CHR == as.numeric(lead_snp['CHR']), ] # check chr
+  
+  df$REGION[ (rownames(df) %in% rownames(snps_in_region) ) ] <- reg
+  
+  lead_snps <- rbind(lead_snps, lead_snp)
+  
+  cut_df <- cut_df[! (rownames(cut_df) %in% rownames(snps_in_region)),]
+  
+  reg <- reg + 1
+  
+  
+}
+```
+
