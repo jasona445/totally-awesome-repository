@@ -23,7 +23,7 @@ If so.. could we use to do this better?
 cut_df <- df
 df$REGION = integer(nrow(df))
 
-lead_snps <- c()
+lead_snps <- data.frame()
 
 reg = 1
 while(min(cut_df$P) < 5e-8){
@@ -34,14 +34,13 @@ while(min(cut_df$P) < 5e-8){
   
   snps_in_region <- cut_df[ cut_df$BP > lims[1] & cut_df$BP < lims[2] & cut_df$CHR == as.numeric(lead_snp['CHR']), ] # check chr
   
-  df$REGION[ (rownames(snps_in_region) %in% rownames(df)) ] <- reg
+  df$REGION[ (rownames(df) %in% rownames(snps_in_region) ) ] <- reg
   
-  lead_snps <- c(lead_snps, lead_snp)
+  lead_snps <- rbind(lead_snps, lead_snp)
   
   cut_df <- cut_df[! (rownames(cut_df) %in% rownames(snps_in_region)),]
   
   reg <- reg + 1
-  
   
   
 }
@@ -66,15 +65,20 @@ ensembl <- useDataset("hsapiens_gene_ensembl",mart=ensembl)
 ```
 
 ```{r}
+lead_snps[1:2,]
 
-for(lead_snp in lead_snps){
-  genes <- getBM(attributes=c('chromosome_name', 'start_position', 'end_position', 'strand', 'ensembl_gene_id'),
+
+genes <- 
+f <- function(lead_snp) {
+  region_genes <- getBM(attributes=c('chromosome_name', 'start_position', 'end_position', 'strand', 'ensembl_gene_id'),
       filters=c('chromosome_name', 'start', 'end'),
       values=list(as.numeric(lead_snp['CHR']), as.numeric(lead_snp['BP']) - 5e5, as.numeric(lead_snp['BP']) + 5e5),
       mart=ensembl)
-  
-  
+  region_genes$REGION = lead_snp['REGION']
 }
+
+do.call(rbind, apply(lead_snps[c(1, 2),], 1, f))
+
 
 
 ```
