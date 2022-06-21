@@ -68,16 +68,16 @@ ensembl <- useDataset("hsapiens_gene_ensembl",mart=ensembl)
 lead_snps[1:2,]
 
 
-genes <- 
 f <- function(lead_snp) {
   region_genes <- getBM(attributes=c('chromosome_name', 'start_position', 'end_position', 'strand', 'ensembl_gene_id'),
       filters=c('chromosome_name', 'start', 'end'),
       values=list(as.numeric(lead_snp['CHR']), as.numeric(lead_snp['BP']) - 5e5, as.numeric(lead_snp['BP']) + 5e5),
       mart=ensembl)
   region_genes$REGION = lead_snp['REGION']
+  region_genes
 }
 
-do.call(rbind, apply(lead_snps[c(1, 2),], 1, f))
+genes <- do.call(rbind, apply(lead_snps, 1, f))
 
 
 
