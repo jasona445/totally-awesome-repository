@@ -28,17 +28,19 @@ while(min(cut_df$P) < 5e-8){
   
   lead_snp = cut_df[which.min(cut_df$P),]
   
-  lims = c( max(0, lead_snp$BP - 5e5), lead_snp$BP + 5e5 ) # Pray doesnt go over.. if does need length
+  lims = c( max(0, lead_snp$BP - 5e5), lead_snp$BP + 5e5 )
   
   snps_in_region <- cut_df[ cut_df$BP > lims[1] & cut_df$BP < lims[2] & cut_df$CHR == as.numeric(lead_snp['CHR']), ] # check chr
   
   df$REGION[ (rownames(snps_in_region) %in% rownames(df)) ] <- reg
+  
   cut_df <- cut_df[! (rownames(cut_df) %in% rownames(snps_in_region)),]
+  
   reg <- reg + 1
+  
 }
 
-df
-tail(df)
+
 
 
 ```
