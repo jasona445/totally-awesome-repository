@@ -65,8 +65,7 @@ ensembl <- useDataset("hsapiens_gene_ensembl",mart=ensembl)
 ```
 
 ```{r}
-lead_snps[1:2,]
-
+# Grab the genes
 
 f <- function(lead_snp) {
   region_genes <- getBM(attributes=c('chromosome_name', 'start_position', 'end_position', 'strand', 'ensembl_gene_id'),
@@ -78,8 +77,6 @@ f <- function(lead_snp) {
 }
 
 genes <- do.call(rbind, apply(lead_snps, 1, f))
-
-
 
 ```
 
