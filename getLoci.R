@@ -22,7 +22,7 @@ getLoci <- function(summStats){
     cut_df <- cut_df[cut_df$BP <= range[1] | cut_df$BP >= range[2],]
     reg <- reg + 1
   }
-  
-  return(lead_snps, small_snp_df)
+  res <- list(lead_snps, small_snp_df)
+  return(res)
 }
 
