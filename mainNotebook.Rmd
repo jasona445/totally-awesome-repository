@@ -36,7 +36,7 @@ while(nrow(cut_df) != 0)
 {
   lead_snp <- cut_df[which.min(cut_df$P),]
   range <- c(lead_snp$BP-5e5, lead_snp$BP+5e5)
-  loci <- cut_df[cut_df$BP > range[1] & cut_df$BP < range[2],]
+  loci <- cut_df[cut_df$BP > range[1] & cut_df$BP < range[2] & cut_df$CHR == as.numeric(lead_snp['CHR']),]
   small_snp_df$REGION[(rownames(small_snp_df) %in% rownames(loci))] <- reg
   lead_snps <- c(lead_snps, lead_snp)
   cut_df <- cut_df[cut_df$BP <= range[1] | cut_df$BP >= range[2],]
