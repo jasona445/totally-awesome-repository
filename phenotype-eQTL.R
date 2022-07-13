@@ -31,7 +31,7 @@ pheno_eQTL_comparison <- function(eQTLs, phenotypes)
 }
 
 args <- commandArgs(trailingOnly = TRUE)
- 
+
 raw_p_df <- read.csv(file=args[1], header=TRUE, sep=' ')
 p_df <- dirty_df[!is.na(raw_df$P),]
 phenotype_loci <- getLoci(p_df)
