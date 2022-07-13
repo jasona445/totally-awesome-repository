@@ -29,3 +29,17 @@ pheno_eQTL_comparison <- function(eQTLs, phenotypes)
     }
   }
 }
+
+args <- commandArgs(trailingOnly = TRUE)
+ 
+raw_p_df <- read.csv(file=args[1], header=TRUE, sep=' ')
+p_df <- dirty_df[!is.na(raw_df$P),]
+phenotype_loci <- getLoci(p_df)
+lead_snps <- phenotype_loci[1]
+write.csv(lead_snps, file=args[2], row.names = TRUE)
+
+#using jason's eQTL analysis 
+#eQTL_df <- read.csv(file=args[2], header=TRUE, sep=' ')
+#cut_df$CHR == as.numeric(lead_snp['CHR'])
+
+
