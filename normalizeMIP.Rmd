@@ -1,0 +1,77 @@
+---
+title: "transformers"
+output: html_notebook
+---
+
+```{r}
+phen <- read.table("./Data/LabExMI_rawfacs.txt",sep="\t",header=T)
+raw <- phen 
+```
+
+```{r}
+install.packages("RNOmni")
+library(RNOmni)
+```
+
+
+```{r} 
+#rank-inverse normalization 
+norm <- raw
+for(i in 2:ncol(norm))
+{
+  vec <- RankNorm(norm[,i][!is.na(norm[,i])])
+  norm[,i] <- replace(norm[,i], !is.na(norm[,i]), vec)
+}
+```
+
+```{r}
+#looks good
+hist(norm[,2], col='dark blue')
+```
+```{r}
+normality_pvals <- cbind(colnames(norm),colnames(norm), colnames(norm))
+normality_pvals[,2] <- NA
+normality_pvals[,3] <- NA
+normality_pvals <- normality_pvals[-1,]
+names(normality_pvals) <- c('phenotype', 'p_val', 'sig_bad?')
+for (i in 1:nrow(normality_pvals))
+{
+  val <- normality_pvals[i,1]
+  normality_pvals[i,2] <- shapiro.test(as.numeric(as.character(norm[,val])))$p.value
+}
+normality_pvals[,3] <- as.numeric(as.character(normality_pvals[,2])) < 0.05
+notnorm <- normality_pvals[as.numeric(as.character(normality_pvals[,2])) < 0.05,]
+```
+
+```{r}
+#toss cuz bad lol 
+hist(norm[,"N_HLADRposCD56hi.panel4"], breaks = 50, col = 'dark blue')
+hist(norm[,"N_CD4negCD8neg_NKT_HLADRpos.panel3"], breaks = 50, col = 'dark blue')
+#have to binarize
+hist(raw[,"N_FounderB.panel6"], breaks = 50, col = 'dark blue')
+hist(raw[,"N_HLADRpos_in_CD4pos_EMRA.panel1"], breaks = 50, col = 'dark blue')
+```
+```{r}
+#have to binarize these two where the thershold is the point with the highest slope slope? i think a second derivative
+phenoname <- "N_FounderB.panel6"
+qqnorm(raw[phenoname][!is.na(raw[phenoname])], pch = 1, frame = FALSE)
+#qqline(raw[phenoname][!is.na(raw[phenoname])], col = "steelblue", lwd = 2)
+phenoname <- "N_HLADRpos_in_CD4pos_EMRA.panel1"
+qqnorm(raw[phenoname][!is.na(raw[phenoname])], pch = 1, frame = FALSE)
+```
+
+```{r}
+write.table(norm, "./Data/phenotypes_normalized.txt", sep = "\t", row.names=F, quote=F)
+```
+
+```{r}
+write.table(normality_pvals, "./Data/phenotypes_normality_pvals.txt", sep = "\t", row.names=F, quote=F)
+```
+
+```{r}
+write.table(notnorm, "./Data/phenotypes_notnorm.txt", sep = "\t", row.names=F, quote=F)
+```
+
+```{r}
+print(raw[,"N_HLADRpos_in_CD4pos_EMRA.panel1"])
+```
