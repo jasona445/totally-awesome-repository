@@ -61,7 +61,10 @@ qqnorm(raw[phenoname][!is.na(raw[phenoname])], pch = 1, frame = FALSE)
 ```
 
 ```{r}
-write.table(norm, "./Data/phenotypes_normalized.txt", sep = "\t", row.names=F, quote=F)
+pheno_trans <- cbind(raw[,1],norm)
+colnames(pheno_trans)[1] <- "FID"
+colnames(pheno_trans)[2] <- "IID"
+write.table(pheno_trans, "./Data/phenotypes_normalized.txt", sep = "\t", row.names=F, quote=F)
 ```
 
 ```{r}
@@ -70,8 +73,4 @@ write.table(normality_pvals, "./Data/phenotypes_normality_pvals.txt", sep = "\t"
 
 ```{r}
 write.table(notnorm, "./Data/phenotypes_notnorm.txt", sep = "\t", row.names=F, quote=F)
-```
-
-```{r}
-print(raw[,"N_HLADRpos_in_CD4pos_EMRA.panel1"])
 ```
