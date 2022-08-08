@@ -1,0 +1,89 @@
+```{r}
+files <- list.files(path="./Data/gwas_results", full.names=TRUE, recursive=FALSE)
+```
+
+```{r}
+idx = 1 
+diff <- length(files) %% 9
+while(idx <= length(files) - diff)
+{
+  df1 <- read.table(file=files[idx], header=TRUE)
+  df2 <- read.table(file=files[idx + 1], header=TRUE)
+  df3 <- read.table(file=files[idx + 2], header=TRUE)
+  df4 <- read.table(file=files[idx + 3], header=TRUE)
+  df5 <- read.table(file=files[idx + 4], header=TRUE)
+  df6 <- read.table(file=files[idx + 5], header=TRUE)
+  df7 <- read.table(file=files[idx + 6], header=TRUE)
+  df8 <- read.table(file=files[idx + 7], header=TRUE)
+  df9 <- read.table(file=files[idx + 8], header=TRUE)
+  
+  par(mfrow=c(3,3))
+  qq(df1$P, main = paste(strsplit(files[idx], "\\.")[[1]][3], strsplit(files[idx], "\\.")[[1]][4]))
+  qq(df2$P, main = paste(strsplit(files[idx+1], "\\.")[[1]][3], strsplit(files[idx+1], "\\.")[[1]][4]))
+  qq(df3$P, main = paste(strsplit(files[idx+2], "\\.")[[1]][3], strsplit(files[idx+2], "\\.")[[1]][4]))
+  qq(df4$P, main = paste(strsplit(files[idx+3], "\\.")[[1]][3], strsplit(files[idx+3], "\\.")[[1]][4]))
+  qq(df5$P, main = paste(strsplit(files[idx+4], "\\.")[[1]][3], strsplit(files[idx+4], "\\.")[[1]][4]))
+  qq(df6$P, main = paste(strsplit(files[idx+5], "\\.")[[1]][3], strsplit(files[idx+5], "\\.")[[1]][4]))
+  qq(df7$P, main = paste(strsplit(files[idx+6], "\\.")[[1]][3], strsplit(files[idx+6], "\\.")[[1]][4]))
+  qq(df8$P, main = paste(strsplit(files[idx+7], "\\.")[[1]][3], strsplit(files[idx+7], "\\.")[[1]][4]))
+  qq(df9$P, main = paste(strsplit(files[idx+8], "\\.")[[1]][3], strsplit(files[idx+8], "\\.")[[1]][4]))
+  
+  idx <- idx + 9
+}
+
+#QQGrid <- function(fname)
+#{
+ # df <- read.table(file=fname, header=TRUE)
+ # qq(df$P)
+#}
+```
+
+```{r}
+  qq(df1$P, main = paste(strsplit(files[idx], "\\.")[[1]][3], strsplit(files[idx], "\\.")[[1]][4]))
+  qq(df2$P, main = paste(strsplit(files[idx+1], "\\.")[[1]][3], strsplit(files[idx+1], "\\.")[[1]][4]))
+```
+
+```{r}
+#install.packages("qqman")
+library(qqman)
+```
+
+```{r}
+manhattan(df1, cex = 0.5)
+```
+
+
+```{r}
+qq(df1$P, main = paste(strsplit(string, "\\.")[[1]][3], strsplit(string, "\\.")[[1]][4]))
+```
+
+```{r}
+idx = 1
+  df1 <- read.table(file=files[idx], header=TRUE)
+  df2 <- read.table(file=files[idx + 1], header=TRUE)
+  df3 <- read.table(file=files[idx + 2], header=TRUE)
+  df4 <- read.table(file=files[idx + 3], header=TRUE)
+  df5 <- read.table(file=files[idx + 4], header=TRUE)
+  df6 <- read.table(file=files[idx + 5], header=TRUE)
+  df7 <- read.table(file=files[idx + 6], header=TRUE)
+  df8 <- read.table(file=files[idx + 7], header=TRUE)
+  df9 <- read.table(file=files[idx + 8], header=TRUE)
+  
+  par(mfrow=c(3,3))
+  qq(df1$P)
+  qq(df2$P)
+  qq(df3$P)
+  qq(df4$P)
+  qq(df5$P)
+  qq(df6$P)
+  qq(df7$P)
+  qq(df8$P)
+  qq(df9$P)
+  
+  idx <- idx + 9
+```
+
+```{r}
+string <- files[idx]
+paste(strsplit(string, "\\.")[[1]][3], strsplit(string, "\\.")[[1]][4])
+```
